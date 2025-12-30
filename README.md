@@ -74,6 +74,12 @@ npm run dev
 - `components/ChessBoard.tsx` - Interactive chess board component with move highlighting
 - `styles/globals.css` - Global styles and chess board styling
 
+## CI/CD
+
+This project includes a GitHub Actions workflow:
+
+- **Build Check** (`.github/workflows/build-check.yml`): Runs on every push and pull request to verify the project builds successfully and passes linting
+
 ## Notes
 
 - **Camera monitoring** (if `NEXT_PUBLIC_MONITORING_URL` is set):
