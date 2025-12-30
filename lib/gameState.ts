@@ -1,9 +1,9 @@
-import { Chess } from 'chess.js';
+import { Chess } from "chess.js";
 
 export interface Player {
   id: string;
   name: string;
-  color: 'white' | 'black';
+  color: "white" | "black";
   moveCount: number;
 }
 
@@ -11,16 +11,16 @@ export interface Room {
   id: string;
   game: Chess;
   players: Map<string, Player>;
-  status: 'waiting' | 'playing' | 'finished';
-  winner: 'white' | 'black' | 'draw' | null;
+  status: "waiting" | "playing" | "finished";
+  winner: "white" | "black" | "draw" | null;
   createdAt: number;
 }
 
 // Room data as sent over WebSocket (serialized version)
 export interface RoomData {
   id: string;
-  status: 'waiting' | 'playing' | 'finished';
-  winner: 'white' | 'black' | 'draw' | null;
+  status: "waiting" | "playing" | "finished";
+  winner: "white" | "black" | "draw" | null;
   fen: string;
   pgn: string;
 }
@@ -33,7 +33,7 @@ class GameStateManager {
       id: roomId,
       game: new Chess(),
       players: new Map(),
-      status: 'waiting',
+      status: "waiting",
       winner: null,
       createdAt: Date.now(),
     };
@@ -45,12 +45,17 @@ class GameStateManager {
     return this.rooms.get(roomId);
   }
 
-  addPlayer(roomId: string, playerId: string, name: string, color: 'white' | 'black'): boolean {
+  addPlayer(
+    roomId: string,
+    playerId: string,
+    name: string,
+    color: "white" | "black"
+  ): boolean {
     const room = this.rooms.get(roomId);
     if (!room) return false;
-    
+
     if (room.players.size >= 2) return false;
-    
+
     room.players.set(playerId, {
       id: playerId,
       name,
@@ -59,7 +64,7 @@ class GameStateManager {
     });
 
     if (room.players.size === 2) {
-      room.status = 'playing';
+      room.status = "playing";
     }
 
     return true;
@@ -73,38 +78,38 @@ class GameStateManager {
 
     if (room.players.size === 0) {
       this.rooms.delete(roomId);
-    } else if (room.players.size === 1 && room.status === 'playing') {
-      room.status = 'waiting';
+    } else if (room.players.size === 1 && room.status === "playing") {
+      room.status = "waiting";
     }
   }
 
   makeMove(roomId: string, move: string): { success: boolean; error?: string } {
     const room = this.rooms.get(roomId);
     if (!room) {
-      return { success: false, error: 'Room not found' };
+      return { success: false, error: "Room not found" };
     }
 
     try {
       const result = room.game.move(move);
       if (!result) {
-        return { success: false, error: 'Invalid move' };
+        return { success: false, error: "Invalid move" };
       }
 
       // Check game status
       if (room.game.isCheckmate()) {
-        room.status = 'finished';
-        room.winner = room.game.turn() === 'w' ? 'black' : 'white';
+        room.status = "finished";
+        room.winner = room.game.turn() === "w" ? "black" : "white";
       } else if (room.game.isDraw()) {
-        room.status = 'finished';
-        room.winner = 'draw';
+        room.status = "finished";
+        room.winner = "draw";
       } else if (room.game.isStalemate()) {
-        room.status = 'finished';
-        room.winner = 'draw';
+        room.status = "finished";
+        room.winner = "draw";
       }
 
       return { success: true };
     } catch (error) {
-      return { success: false, error: 'Invalid move' };
+      return { success: false, error: "Invalid move" };
     }
   }
 
@@ -141,4 +146,3 @@ class GameStateManager {
 }
 
 export const gameState = new GameStateManager();
-

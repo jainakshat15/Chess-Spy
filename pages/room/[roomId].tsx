@@ -171,8 +171,22 @@ export default function RoomPage() {
           className="card"
           style={{ maxWidth: "500px", width: "100%", textAlign: "center" }}
         >
-          <h1 style={{ color: "#c33", marginBottom: "16px", fontSize: "clamp(20px, 5vw, 24px)" }}>Room Full</h1>
-          <p style={{ color: "#666", marginBottom: "24px", fontSize: "clamp(14px, 3vw, 16px)" }}>
+          <h1
+            style={{
+              color: "#c33",
+              marginBottom: "16px",
+              fontSize: "clamp(20px, 5vw, 24px)",
+            }}
+          >
+            Room Full
+          </h1>
+          <p
+            style={{
+              color: "#666",
+              marginBottom: "24px",
+              fontSize: "clamp(14px, 3vw, 16px)",
+            }}
+          >
             This room already has 2 players. Please try a different room ID.
           </p>
           <button className="button" onClick={handleLeaveRoom}>
@@ -220,16 +234,27 @@ export default function RoomPage() {
           }}
         >
           <div style={{ flex: "1", minWidth: "200px" }}>
-            <h1 style={{ color: "white", marginBottom: "8px", fontSize: "clamp(20px, 5vw, 28px)" }}>
+            <h1
+              style={{
+                color: "white",
+                marginBottom: "8px",
+                fontSize: "clamp(20px, 5vw, 28px)",
+              }}
+            >
               Room: {roomId}
             </h1>
-            <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "clamp(14px, 3vw, 16px)" }}>
+            <p
+              style={{
+                color: "rgba(255,255,255,0.9)",
+                fontSize: "clamp(14px, 3vw, 16px)",
+              }}
+            >
               {player?.name} ({player?.color}) vs{" "}
               {opponent?.name || "Waiting..."} ({opponent?.color || "..."})
             </p>
           </div>
-          <button 
-            className="button" 
+          <button
+            className="button"
             onClick={handleLeaveRoom}
             style={{ flexShrink: 0 }}
           >
@@ -254,7 +279,14 @@ export default function RoomPage() {
             width: "100%",
           }}
         >
-          <div className="card" style={{ display: "inline-block", width: "100%", maxWidth: "fit-content" }}>
+          <div
+            className="card"
+            style={{
+              display: "inline-block",
+              width: "100%",
+              maxWidth: "fit-content",
+            }}
+          >
             <div style={{ textAlign: "center", marginBottom: "16px" }}>
               <div
                 className={`status-message ${
@@ -269,7 +301,13 @@ export default function RoomPage() {
                 {getStatusMessage()}
               </div>
             </div>
-            <div style={{ display: "flex", justifyContent: "center", overflow: "auto" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                overflow: "auto",
+              }}
+            >
               {player && (
                 <ChessBoard
                   fen={fen}
@@ -284,7 +322,13 @@ export default function RoomPage() {
 
         {status === "finished" && (
           <div className="card" style={{ textAlign: "center" }}>
-            <h2 style={{ marginBottom: "16px", color: "#333", fontSize: "clamp(20px, 5vw, 24px)" }}>
+            <h2
+              style={{
+                marginBottom: "16px",
+                color: "#333",
+                fontSize: "clamp(20px, 5vw, 24px)",
+              }}
+            >
               {winner === "draw"
                 ? "It's a Draw!"
                 : `${winner === player?.color ? "You" : "Opponent"} Won!`}
