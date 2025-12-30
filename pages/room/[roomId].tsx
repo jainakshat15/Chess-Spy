@@ -32,7 +32,10 @@ export default function RoomPage() {
     const socketInstance = getSocket();
     setSocket(socketInstance);
 
-    socketInstance.on("connect", async () => {
+    // Function to join room
+    const joinRoom = async () => {
+      console.log("Joining room:", roomId, "with name:", playerNameRef.current);
+
       // Check camera permission before joining if monitoring URL is present
       if (MONITORING_URL) {
         const hasPermission = await requestCameraPermission();
@@ -48,7 +51,19 @@ export default function RoomPage() {
 
       // Request current room state
       socketInstance.emit("get-room-state", { roomId });
-    });
+    };
+
+    // If already connected, join immediately
+    if (socketInstance.connected) {
+      console.log("Socket already connected, joining room immediately");
+      joinRoom();
+    } else {
+      // Wait for connection
+      socketInstance.on("connect", () => {
+        console.log("Socket connected, joining room");
+        joinRoom();
+      });
+    }
 
     socketInstance.on("room-full", () => {
       setRoomFull(true);
@@ -58,6 +73,7 @@ export default function RoomPage() {
     socketInstance.on(
       "room-updated",
       (data: { room: RoomData; players: Player[] }) => {
+        console.log("Room updated:", data);
         const currentPlayer = data.players.find(
           (p) => p.id === socketInstance.id
         );
@@ -66,9 +82,11 @@ export default function RoomPage() {
         );
 
         if (currentPlayer) {
+          console.log("Setting player:", currentPlayer);
           setPlayer(currentPlayer);
         }
         if (otherPlayer) {
+          console.log("Setting opponent:", otherPlayer);
           setOpponent(otherPlayer);
         }
 
@@ -115,6 +133,7 @@ export default function RoomPage() {
     socketInstance.on(
       "room-state",
       (data: { room: RoomData; players: Player[] }) => {
+        console.log("Room state received:", data);
         const currentPlayer = data.players.find(
           (p) => p.id === socketInstance.id
         );
@@ -123,9 +142,11 @@ export default function RoomPage() {
         );
 
         if (currentPlayer) {
+          console.log("Setting player from room-state:", currentPlayer);
           setPlayer(currentPlayer);
         }
         if (otherPlayer) {
+          console.log("Setting opponent from room-state:", otherPlayer);
           setOpponent(otherPlayer);
         }
 
@@ -134,6 +155,17 @@ export default function RoomPage() {
         setWinner(data.room.winner);
       }
     );
+
+    // Add error handlers for debugging
+    socketInstance.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+      setError(`Connection failed: ${error.message}`);
+    });
+
+    socketInstance.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+      setError("Disconnected from server");
+    });
 
     return () => {
       socketInstance.disconnect();
@@ -308,14 +340,12 @@ export default function RoomPage() {
                 overflow: "auto",
               }}
             >
-              {player && (
-                <ChessBoard
-                  fen={fen}
-                  orientation={player.color}
-                  onMove={handleMove}
-                  disabled={status !== "playing" || !player}
-                />
-              )}
+              <ChessBoard
+                fen={fen}
+                orientation={player?.color || "white"}
+                onMove={handleMove}
+                disabled={status !== "playing" || !player}
+              />
             </div>
           </div>
         </div>

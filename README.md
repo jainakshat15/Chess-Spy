@@ -19,25 +19,58 @@ A real-time multiplayer chess game built with Next.js, WebSockets, and in-memory
 
 ## Getting Started
 
+### Local Development
+
+The application consists of two separate servers:
+
+- **Next.js App** (port 3000) - Frontend and UI
+- **WebSocket Server** (port 3001) - Real-time game state
+
 1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. (Optional) Set up monitoring URL in `.env.local`:
+2. Create `.env.local` file in the root directory:
 
 ```bash
-NEXT_PUBLIC_MONITORING_URL=https://your-endpoint.com/api/capture
+# WebSocket Server URL (required for local development)
+NEXT_PUBLIC_WEBSOCKET_URL=http://localhost:3001
+
+# Optional: Monitoring endpoint for camera captures
+# NEXT_PUBLIC_MONITORING_URL=https://your-endpoint.com/api/capture
 ```
 
-3. Run the development server:
+3. Run both servers:
+
+**Option A: Run in separate terminals**
+
+Terminal 1 - WebSocket Server:
+
+```bash
+npm run dev:ws
+```
+
+Terminal 2 - Next.js App:
 
 ```bash
 npm run dev
 ```
 
+**Option B: Run both together** (requires `concurrently`):
+
+```bash
+npm install --save-dev concurrently
+npm run dev:all
+```
+
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+**Note**: If you see 404 errors for `/api/socket`, make sure:
+
+- The WebSocket server is running on port 3001
+- `NEXT_PUBLIC_WEBSOCKET_URL=http://localhost:3001` is set in `.env.local`
 
 ## How to Play
 
@@ -55,16 +88,26 @@ npm run dev
 
 ## Technical Details
 
-- **Frontend**: Next.js 14 with TypeScript
-- **Backend**: Custom Node.js server with Socket.io
+- **Frontend**: Next.js 14 with TypeScript (deployed on Vercel)
+- **WebSocket Server**: Standalone Node.js server with Socket.io (deployed on Render)
 - **Chess Engine**: chess.js for game logic
 - **State Management**: In-memory Map-based storage
 - **Real-time**: WebSocket connections for live updates (Socket.io on `/api/socket` path)
 - **Camera**: Optional monitoring via `NEXT_PUBLIC_MONITORING_URL` environment variable
 
+## Deployment
+
+This application is designed to be deployed on two separate platforms:
+
+- **WebSocket Server**: Render (see `websocket-server.js`)
+- **Next.js App**: Vercel (standard Next.js deployment)
+
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+
 ## Project Structure
 
-- `server.js` - Custom Next.js server with Socket.io
+- `server.js` - Next.js custom server (for local development)
+- `websocket-server.js` - Standalone WebSocket server (for Render deployment)
 - `lib/gameState.ts` - In-memory game state management (TypeScript)
 - `lib/camera.ts` - Camera permission and image capture utilities
 - `lib/socketClient.ts` - Socket.io client connection management
@@ -73,6 +116,8 @@ npm run dev
 - `pages/room/[roomId].tsx` - Game room page with real-time gameplay
 - `components/ChessBoard.tsx` - Interactive chess board component with move highlighting
 - `styles/globals.css` - Global styles and chess board styling
+- `DEPLOYMENT.md` - Detailed deployment guide for Render and Vercel
+- `QUICK_DEPLOY.md` - Quick reference for deployment
 
 ## CI/CD
 
