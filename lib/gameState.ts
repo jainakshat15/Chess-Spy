@@ -16,6 +16,15 @@ export interface Room {
   createdAt: number;
 }
 
+// Room data as sent over WebSocket (serialized version)
+export interface RoomData {
+  id: string;
+  status: 'waiting' | 'playing' | 'finished';
+  winner: 'white' | 'black' | 'draw' | null;
+  fen: string;
+  pgn: string;
+}
+
 class GameStateManager {
   private rooms: Map<string, Room> = new Map();
 

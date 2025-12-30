@@ -5,7 +5,7 @@ import { requestCameraPermission, captureAndSendImage } from "@/lib/camera";
 import { generateRandomName } from "@/lib/utils";
 import ChessBoard from "@/components/ChessBoard";
 import type { Socket } from "socket.io-client";
-import type { Player, Room } from "@/lib/gameState";
+import type { Player, RoomData } from "@/lib/gameState";
 
 const MONITORING_URL = process.env.NEXT_PUBLIC_MONITORING_URL || "";
 
@@ -57,7 +57,7 @@ export default function RoomPage() {
 
     socketInstance.on(
       "room-updated",
-      (data: { room: Room; players: Player[] }) => {
+      (data: { room: RoomData; players: Player[] }) => {
         const currentPlayer = data.players.find(
           (p) => p.id === socketInstance.id
         );
@@ -114,7 +114,7 @@ export default function RoomPage() {
 
     socketInstance.on(
       "room-state",
-      (data: { room: Room; players: Player[] }) => {
+      (data: { room: RoomData; players: Player[] }) => {
         const currentPlayer = data.players.find(
           (p) => p.id === socketInstance.id
         );
